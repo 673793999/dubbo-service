@@ -7,10 +7,138 @@
     <groupId>dubbo-service</groupId>
     <artifactId>com.jtl</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <springversion>4.3.3.RELEASE</springversion>
+        <repository.url>http://127.0.0.1:8081/repository/maven-public/</repository.url>
     </properties>
+
+    <!-- 私有远程仓库（已包括代理中央仓库，私有快照、发行版仓库，第三方仓库） -->
+    <repositories>
+        <repository>
+            <id>nexus</id>
+            <name>内部私服</name>
+            <url>${repository.url}</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+
+        <!--  		 <repository>
+                    <id>atlassian</id>
+                    <name>atlassian</name>
+                    <url>http://maven.jahia.org/maven2/</url>
+                </repository> -->
+    </repositories>
+
+    <!--编译配置-->
+    <build>
+        <!--jar包名称-->
+        <finalName>dubbo-service</finalName>
+
+        <resources>
+            <resource>
+                <targetPath>${project.build.directory}/classes</targetPath><!--构建目录-->
+                <directory>src/main/resources</directory><!--编译输出路径-->
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <filtering>true</filtering><!--开启变量过滤（替换）功能-->
+            </resource>
+            <!--结合com.alibaba.dubbo.container.Main-->
+            <resource>
+                <targetPath>${project.build.directory}/classes/META-INF/spring</targetPath>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>applicationContext.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+
+        </resources>
+
+        <!--插件管理-->
+        <!--<pluginManagement>-->
+            <!--<plugins>-->
+                <!--<plugin>-->
+                    <!--<groupId>org.eclipse.m2e</groupId>-->
+                    <!--<artifactId>lifecycle-mapping</artifactId>-->
+                    <!--<version>1.0.0</version>-->
+                    <!--<configuration>-->
+                        <!--<lifecycleMappingMetadata>-->
+                            <!--<pluginExecutions>-->
+                                <!--<pluginExecution>-->
+                                    <!--<pluginExecutionFilter>-->
+                                        <!--<groupId>org.apache.maven.plugins</groupId>-->
+                                        <!--<artifactId>maven-dependency-plugin</artifactId>-->
+                                        <!--<versionRange>[2.0,)</versionRange>-->
+                                        <!--<goals>-->
+                                            <!--<goal>copy-dependencies</goal>-->
+                                        <!--</goals>-->
+                                    <!--</pluginExecutionFilter>-->
+                                    <!--<action>-->
+                                        <!--<ignore />-->
+                                    <!--</action>-->
+                                <!--</pluginExecution>-->
+                            <!--</pluginExecutions>-->
+                        <!--</lifecycleMappingMetadata>-->
+                    <!--</configuration>-->
+                <!--</plugin>-->
+            <!--</plugins>-->
+        <!--</pluginManagement>-->
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <classesDirectory>target/classes/</classesDirectory>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.alibaba.dubbo.container.Main</mainClass>
+                            <!--打包时不记录时间戳版本-->
+                            <useUniqueVersions>false</useUniqueVersions>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>.</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!--依赖包管理插件-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-deploy-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>copy-dependencies</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>copy-dependencies</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<type>jar</type>-->
+                            <!--<useUniqueVersions>false</useUniqueVersions>-->
+                            <!--<outputDirectory>-->
+                                <!--${project.build.directory}/lib-->
+                            <!--</outputDirectory>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
+        </plugins>
+
+
+    </build>
+
 
     <dependencies>
         <!--******************************************zookeeper所需包************************************************-->
